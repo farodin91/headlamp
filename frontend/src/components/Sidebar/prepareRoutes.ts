@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import helpers from '../../helpers';
+import { getClusterAccentColor } from '../../lib/cluster';
 import { createRouteURL } from '../../lib/router';
 import { getCluster } from '../../lib/util';
 import store from '../../redux/stores/store';
@@ -16,6 +17,8 @@ function prepareRoutes(
   const clusters = store.getState()?.config?.clusters || {};
   const showHome = helpers.isElectron() || Object.keys(clusters).length !== 1;
   const defaultClusterURL = createRouteURL('cluster', { cluster: Object.keys(clusters)[0] });
+  const cluster = getCluster() || undefined;
+  const accentColor = getClusterAccentColor(cluster);
 
   const homeItems: SidebarItemProps[] = [
     {
@@ -69,6 +72,7 @@ function prepareRoutes(
       label: t('glossary|Cluster'),
       subtitle: getCluster() || undefined,
       icon: 'mdi:hexagon-multiple-outline',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'namespaces',
@@ -84,6 +88,7 @@ function prepareRoutes(
       name: 'workloads',
       label: t('glossary|Workloads'),
       icon: 'mdi:circle-slice-2',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'Pods',
@@ -119,6 +124,7 @@ function prepareRoutes(
       name: 'storage',
       label: t('glossary|Storage'),
       icon: 'mdi:database',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'persistentVolumeClaims',
@@ -138,6 +144,7 @@ function prepareRoutes(
       name: 'network',
       label: t('glossary|Network'),
       icon: 'mdi:folder-network-outline',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'services',
@@ -170,6 +177,7 @@ function prepareRoutes(
       name: 'security',
       label: t('glossary|Security'),
       icon: 'mdi:lock',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'serviceAccounts',
@@ -189,6 +197,7 @@ function prepareRoutes(
       name: 'config',
       label: t('glossary|Configuration'),
       icon: 'mdi:format-list-checks',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'configMaps',
@@ -244,6 +253,7 @@ function prepareRoutes(
       name: 'crds',
       label: t('glossary|Custom Resources'),
       icon: 'mdi:puzzle',
+      selectedColor: accentColor,
       subList: [
         {
           name: 'crs',
@@ -255,6 +265,7 @@ function prepareRoutes(
       name: 'map',
       icon: 'mdi:map',
       label: t('glossary|Map (beta)'),
+      selectedColor: accentColor,
     },
   ];
 

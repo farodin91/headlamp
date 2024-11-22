@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import helpers, { ClusterSettings } from '../../../helpers';
+import { stringToColour } from '../../../lib/cluster';
 import { useCluster, useClustersConf } from '../../../lib/k8s';
 import { deleteCluster, parseKubeConfig, renameCluster } from '../../../lib/k8s/apiProxy';
 import { setConfig, setStatelessConfig } from '../../../redux/configSlice';
@@ -86,6 +87,8 @@ export default function SettingsCluster() {
   const [defaultNamespace, setDefaultNamespace] = React.useState('default');
   const [userDefaultNamespace, setUserDefaultNamespace] = React.useState('');
   const [newAllowedNamespace, setNewAllowedNamespace] = React.useState('');
+  const [defaultAccentColor, setDefaultAccentColor] = React.useState('');
+  const [newAccentColor, setNewAccentColor] = React.useState('');
   const [clusterSettings, setClusterSettings] = React.useState<ClusterSettings | null>(null);
   const [cluster, setCluster] = React.useState(useCluster() || '');
   const clusterFromURLRef = React.useRef('');
@@ -167,6 +170,10 @@ export default function SettingsCluster() {
     if (!!clusterConfNs && clusterConfNs !== defaultNamespace) {
       setDefaultNamespace(clusterConfNs);
     }
+    const calucatedColor = stringToColour(cluster);
+    if (calucatedColor !== defaultAccentColor) {
+      setDefaultAccentColor(calucatedColor);
+    }
   }, [cluster, clusterConf]);
 
   React.useEffect(() => {
@@ -178,11 +185,33 @@ export default function SettingsCluster() {
       setNewClusterName(clusterSettings?.currentName || '');
     }
 
+    if (clusterSettings?.accentColor !== defaultAccentColor) {
+      setNewAccentColor(clusterSettings?.accentColor || '');
+    }
+
     // Avoid re-initializing settings as {} just because the cluster is not yet set.
     if (clusterSettings !== null) {
       helpers.storeClusterSettings(cluster || '', clusterSettings);
     }
   }, [cluster, clusterSettings]);
+
+  React.useEffect(() => {
+    let timeoutHandle: NodeJS.Timeout | null = null;
+
+    if (isEditingAccentColor()) {
+      // We store the namespace after a timeout.
+      timeoutHandle = setTimeout(() => {
+        storeNewAccentColor(newAccentColor);
+      }, 1000);
+    }
+
+    return () => {
+      if (timeoutHandle) {
+        clearTimeout(timeoutHandle);
+        clusterFromURLRef.current = '';
+      }
+    };
+  }, [newAccentColor]);
 
   React.useEffect(() => {
     let timeoutHandle: NodeJS.Timeout | null = null;
@@ -221,6 +250,10 @@ export default function SettingsCluster() {
     return clusterSettings?.defaultNamespace !== userDefaultNamespace;
   }
 
+  function isEditingAccentColor() {
+    return clusterSettings?.accentColor !== newAccentColor;
+  }
+
   function storeNewAllowedNamespace(namespace: string) {
     setNewAllowedNamespace('');
     setClusterSettings((settings: ClusterSettings | null) => {
@@ -229,6 +262,20 @@ export default function SettingsCluster() {
       newSettings.allowedNamespaces.push(namespace);
       // Sort and avoid duplicates
       newSettings.allowedNamespaces = [...new Set(newSettings.allowedNamespaces)].sort();
+      return newSettings;
+    });
+  }
+
+  function storeNewAccentColor(accentColor: string) {
+    let actualAccentColor = accentColor;
+    if (accentColor === defaultAccentColor) {
+      actualAccentColor = '';
+      setNewAccentColor(actualAccentColor);
+    }
+
+    setClusterSettings((settings: ClusterSettings | null) => {
+      const newSettings = { ...(settings || {}) };
+      newSettings.accentColor = actualAccentColor;
       return newSettings;
     });
   }
@@ -502,6 +549,33 @@ export default function SettingsCluster() {
                     ))}
                   </Box>
                 </>
+              ),
+            },
+            {
+              name: t('translation|Accent Color'),
+              value: (
+                <TextField
+                  onChange={event => {
+                    let value = event.target.value;
+                    value = value.replace(' ', '');
+                    setNewAccentColor(value);
+                  }}
+                  value={newAccentColor}
+                  placeholder={defaultAccentColor}
+                  helperText={t('translation|Default: A color generated based on the name.')}
+                  InputProps={{
+                    endAdornment: isEditingAccentColor() ? (
+                      <Icon width={24} color={newAccentColor} icon="mdi:progress-check" />
+                    ) : (
+                      <Icon
+                        width={24}
+                        icon="mdi:check-bold"
+                        color={newAccentColor || defaultAccentColor}
+                      />
+                    ),
+                    sx: { maxWidth: 250 },
+                  }}
+                />
               ),
             },
           ]}

@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useHistory } from 'react-router-dom';
 import helpers from '../../../helpers';
+import { getClusterAccentColor } from '../../../lib/cluster';
 import { Cluster } from '../../../lib/k8s/cluster';
 import { createRouteURL } from '../../../lib/router';
 import { getClusterPrefixedPath } from '../../../lib/util';
@@ -19,10 +20,12 @@ interface ClusterButtonProps extends React.PropsWithChildren<{}> {
 
 function ClusterButton(props: ClusterButtonProps) {
   const { cluster, onClick = undefined, focusedRef } = props;
+  const accentColor = getClusterAccentColor(cluster.name);
 
   return (
     <SquareButton
       focusRipple
+      backgroundColor={accentColor}
       icon="mdi:kubernetes"
       label={cluster.name}
       ref={focusedRef}

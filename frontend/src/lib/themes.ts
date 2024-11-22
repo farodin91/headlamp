@@ -64,7 +64,7 @@ const commonRules = {
         color: '#fff',
       },
       selected: {
-        color: '#fff099',
+        color: '#fff200',
         backgroundColor: 'unset',
       },
       hover: {

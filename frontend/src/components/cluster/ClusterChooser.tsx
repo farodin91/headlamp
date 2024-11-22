@@ -2,6 +2,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/system';
 import React, { ReactElement } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { getClusterAccentColor } from '../../lib/cluster';
 
 export interface ClusterChooserProps {
   clickHandler: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
@@ -24,6 +25,7 @@ const ClusterChooser = React.forwardRef(function ClusterChooser(
   ref: React.Ref<HTMLButtonElement>
 ) {
   const { t } = useTranslation();
+  const accentColor = getClusterAccentColor(cluster);
 
   return (
     <Button
@@ -32,7 +34,7 @@ const ClusterChooser = React.forwardRef(function ClusterChooser(
       onClick={clickHandler}
       sx={theme => ({
         color: theme.palette.clusterChooser.button.color,
-        background: theme.palette.clusterChooser.button.background,
+        background: accentColor,
         '&:hover': {
           background: theme.palette.clusterChooser.button.hover.background,
         },

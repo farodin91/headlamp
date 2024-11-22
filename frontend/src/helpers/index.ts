@@ -310,6 +310,7 @@ export interface ClusterSettings {
   defaultNamespace?: string;
   allowedNamespaces?: string[];
   currentName?: string;
+  accentColor?: string;
 }
 
 function storeClusterSettings(clusterName: string, settings: ClusterSettings) {

@@ -16,10 +16,20 @@ export interface SquareButtonProps extends ButtonBaseProps {
   label: string;
   /** Whether this button has the primary color or not. */
   primary?: boolean;
+
+  backgroundColor: string;
 }
 
 export default function SquareButton(props: SquareButtonProps) {
-  const { icon, iconSize = 50, iconColor, label, primary = false, ...otherProps } = props;
+  const {
+    icon,
+    iconSize = 50,
+    iconColor,
+    label,
+    primary = false,
+    backgroundColor,
+    ...otherProps
+  } = props;
   const theme = useTheme();
 
   return (
@@ -29,7 +39,7 @@ export default function SquareButton(props: SquareButtonProps) {
           width: 140,
           height: 140,
           paddingTop: '24px',
-          backgroundColor: primary ? 'text.primary' : 'squareButton.background',
+          backgroundColor: primary ? 'text.primary' : backgroundColor,
         }}
       >
         <CardContent sx={{ textAlign: 'center', paddingTop: 0 }}>

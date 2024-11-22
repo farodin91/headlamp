@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { generatePath } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import helpers from '../../helpers';
+import { getClusterAccentColor } from '../../lib/cluster';
 import { useCluster, useClustersConf } from '../../lib/k8s';
 import { Cluster } from '../../lib/k8s/cluster';
 import { createRouteURL } from '../../lib/router';
@@ -26,7 +27,7 @@ import { getCluster, getClusterPrefixedPath } from '../../lib/util';
 function ClusterListItem(props: { cluster: Cluster; onClick: () => void; selected?: boolean }) {
   const { cluster, selected, onClick } = props;
   const { t } = useTranslation();
-  const theme = useTheme();
+  const accentColor = getClusterAccentColor(cluster.name);
 
   return (
     <MenuItem
@@ -36,7 +37,7 @@ function ClusterListItem(props: { cluster: Cluster; onClick: () => void; selecte
       id={cluster.name}
     >
       <ListItemIcon>
-        <Icon icon="mdi:kubernetes" width={26} color={theme.palette.text.primary} />
+        <Icon icon="mdi:kubernetes" width={26} color={accentColor} />
       </ListItemIcon>
       <ListItemText
         primary={cluster.name}

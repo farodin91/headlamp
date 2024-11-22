@@ -25,6 +25,7 @@ export interface SidebarItemProps extends ListItemProps, SidebarEntry {
   subList?: Omit<this, 'sidebar'>[];
   /** Whether to hide the sidebar item. */
   hide?: boolean;
+  selectedColor?: string;
 }
 
 export default function SidebarItem(props: SidebarItemProps) {
@@ -35,6 +36,7 @@ export default function SidebarItem(props: SidebarItemProps) {
     url = null,
     search,
     useClusterURL = false,
+    selectedColor = '#fff200',
     subList = [],
     selectedName,
     hasParent = false,
@@ -179,7 +181,7 @@ export default function SidebarItem(props: SidebarItemProps) {
                 '&, & *': {
                   color: theme.palette.sidebarLink.main.selected.color,
                 },
-                backgroundColor: `${theme.palette.sidebarLink.main.selected.backgroundColor}!important`,
+                backgroundColor: `${selectedColor}!important`,
                 '& .MuiListItemText-secondary': {
                   fontSize: '.85rem',
                   fontStyle: 'italic',
