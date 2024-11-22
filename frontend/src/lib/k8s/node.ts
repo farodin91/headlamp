@@ -42,6 +42,10 @@ export interface KubeNode extends KubeObjectInterface {
       osImage: string;
       systemUUID: string;
     };
+    images: {
+      names: string[];
+      sizebytes: number;
+    }[];
   };
   spec: {
     podCIDR: string;

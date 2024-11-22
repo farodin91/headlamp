@@ -112,6 +112,7 @@
   "Kube Proxy Version": "Versión de Kube Proxy",
   "Kubelet Version": "Versión de Kubelet",
   "Container Runtime Version": "Versión de Container Runtime",
+  "Size": "",
   "Roles": "Roles",
   "External IP": "IP Externa",
   "OS image": "Imagen del SO",

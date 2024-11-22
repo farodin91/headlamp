@@ -51,6 +51,7 @@ export const NODE_DUMMY_DATA: KubeNode[] = [
         osImage: '',
         systemUUID: '',
       },
+      images: [],
     },
   },
 ];

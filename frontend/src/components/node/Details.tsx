@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { apply, drainNode, drainNodeStatus } from '../../lib/k8s/apiProxy';
 import { KubeMetrics } from '../../lib/k8s/cluster';
 import Node from '../../lib/k8s/node';
-import { getCluster, timeAgo } from '../../lib/util';
+import { getCluster, normalizeUnit, timeAgo } from '../../lib/util';
 import { DefaultHeaderAction } from '../../redux/actionButtonsSlice';
 import { clusterAction } from '../../redux/clusterActionSlice';
 import { AppDispatch } from '../../redux/stores/store';
@@ -21,7 +21,7 @@ import { HeaderLabel, StatusLabel, ValueLabel } from '../common/Label';
 import { ConditionsSection, DetailsGrid, OwnedPodsSection } from '../common/Resource';
 import AuthVisible from '../common/Resource/AuthVisible';
 import { SectionBox } from '../common/SectionBox';
-import { NameValueTable } from '../common/SimpleTable';
+import SimpleTable, { NameValueTable } from '../common/SimpleTable';
 import { NodeTaintsLabel } from './utils';
 
 function NodeConditionsLabel(props: { node: Node }) {
@@ -261,6 +261,10 @@ export default function NodeDetails(props: { name?: string }) {
               id: 'headlamp.node-owned-pods',
               section: <OwnedPodsSection resource={item?.jsonData} />,
             },
+            {
+              id: 'headlamp.node-status-images',
+              section: <ImagesSection node={item} />,
+            },
           ]
         }
       />
@@ -401,6 +405,38 @@ function SystemInfoSection(props: SystemInfoSectionProps) {
             value: node.status.nodeInfo.containerRuntimeVersion,
           },
         ]}
+      />
+    </SectionBox>
+  );
+}
+function ImagesSection(props: SystemInfoSectionProps) {
+  const { node } = props;
+  const { t } = useTranslation('glossary');
+
+  if (!node) {
+    return null;
+  }
+
+  return (
+    <SectionBox title={t('translation|Available Images')}>
+      <SimpleTable
+        columns={[
+          {
+            label: t('Images'),
+            getter: image => (
+              <ul>
+                {(image.names as string[]).map(n => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            ),
+          },
+          {
+            label: t('Size'),
+            getter: image => normalizeUnit('memory', `${image.sizeBytes}`),
+          },
+        ]}
+        data={node.jsonData.status.images || []}
       />
     </SectionBox>
   );
